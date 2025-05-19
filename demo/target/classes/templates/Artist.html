@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${Artist}"></title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        /* Default dark mode styles */
+        body {
+            background-color: #212529;
+            color: white;
+            transition: background 0.3s, color 0.3s;
+        }
+        .navbar-dark {
+            background-color: #343a40;
+        }
+        .table-dark {
+            background-color: #343a40;
+            color: white;
+        }
+        .table-dark thead {
+            background-color: #007bff !important;
+            color: white;
+        }
+
+        /* Light mode styles */
+        body.light-mode {
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        body.light-mode h2 {
+            color: #212529; /* Set header text color for light mode */
+        }
+        body.light-mode .navbar {
+            background-color: #f8f9fa !important; /* Light background for navbar */
+        }
+        body.light-mode .navbar a.nav-link {
+            color: #212529 !important; /* Dark text for links */
+        }
+        body.light-mode .navbar a.nav-link:hover {
+            color: #007bff !important; /* Optional: Add hover effect */
+        }
+        #filmTable a {
+            text-decoration: none;
+            color: inherit; /* Optional: Keep the text color consistent */
+            color: #007bff;
+        }
+        #filmTable a:hover {
+            text-decoration: underline; /* Optional: Add underline on hover */
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">MassWala Music</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="devotionalDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">Devotional</a>
+                        <ul class="dropdown-menu" aria-labelledby="devotionalDropdown">
+                            <li><a class="dropdown-item" href="#">Ayyappan</a></li>
+                            <li><a class="dropdown-item" href="#">Amman</a></li>
+                            <li><a class="dropdown-item" href="#">Murugan</a></li>
+                            <li><a class="dropdown-item" href="#">Vinayagar</a></li>
+                            <li><a class="dropdown-item" href="#">Perumal</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="movieSongsDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">Movie Songs</a>
+                        <ul class="dropdown-menu" aria-labelledby="movieSongsDropdown">
+                            <li><a class="dropdown-item" href="/Illaiyaraja">Illaiyaraja</a></li>
+                            <li><a class="dropdown-item" href="/Vijay">Vijay</a></li>
+                            <li><a class="dropdown-item" href="/Sivakarthikayan">Sivakarthikayan</a></li>
+                            <li><a class="dropdown-item" href="/Rajinikanth">Rajinikanth</a></li>
+                            <li><a class="dropdown-item" href="/Prabu">Prabu</a></li>
+                            <li><a class="dropdown-item" href="/Ajith">Ajith</a></li>
+                            <li><a class="dropdown-item" href="/Mohan">Mohan</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                </ul>
+                <button id="toggleButton" class="btn btn-warning ms-3">Switch to Light Mode</button>
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-5">
+        <h2 th:text="${Artist}"></h2>
+        <div class="table-responsive mt-3">
+            <table id="filmTable" class="table table-bordered table-striped table-dark">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Movie</th>
+                        <th>Character</th>
+                    </tr>
+                </thead>
+                <tbody>
+					<tr th:each="movie, loop : ${movies}">
+					           
+					            <!--<td th:text="${movie.year}"></td>-->
+					            <td ><a href="#" th:text="${movie.title}" ></a></td>
+					            <td th:text="${movie.role}"></td>
+					           <!-- <td th:text="${movie.notes}"></td>-->
+					        </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Get references to elements
+        const toggleButton = document.getElementById("toggleButton");
+        const body = document.body;
+        const table = document.getElementById("filmTable");
+
+        // Function to toggle between light and dark mode
+        function toggleMode() {
+            body.classList.toggle("light-mode");
+            table.classList.toggle("table-dark"); // Toggle table theme
+
+            // Update button text
+            if (body.classList.contains("light-mode")) {
+                toggleButton.textContent = "Switch to Dark Mode";
+                localStorage.setItem("theme", "light"); // Save user preference
+            } else {
+                toggleButton.textContent = "Switch to Light Mode";
+                localStorage.setItem("theme", "dark"); // Save user preference
+            }
+        }
+
+        // Load saved theme preference on page load
+        if (localStorage.getItem("theme") === "light") {
+            body.classList.add("light-mode");
+            table.classList.remove("table-dark"); // Remove dark table for light mode
+            toggleButton.textContent = "Switch to Dark Mode";
+        }
+
+        // Add event listener to the button
+        toggleButton.addEventListener("click", toggleMode);
+    </script>
+</body>
+</html>
