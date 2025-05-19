@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${Title}"></title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+    /* Default dark mode styles */
+    body.bg-dark {
+        background-color: #212529;
+        color: white;
+        transition: background-color 0.3s, color 0.3s;
+    }
+    .bg-dark .navbar {
+        background-color: #343a40;
+    }
+    .bg-dark .navbar .navbar-brand,
+    .bg-dark .navbar .nav-link {
+        color: white;
+    }
+    .bg-dark .navbar .nav-link:hover {
+        color: #007bff;
+    }
+    .bg-dark .list-group-item {
+        background-color: #343a40;
+        color: white;
+    }
+
+    /* Light mode styles */
+    body.light-mode {
+        background-color: #f8f9fa;
+        color: #212529;
+    }
+    body.light-mode h1 {
+        color: #212529; /* Ensure the header text is visible in light mode */
+    }
+    body.light-mode .navbar {
+        background-color: #f8f9fa;
+    }
+    body.light-mode .navbar .navbar-brand,
+    body.light-mode .navbar .nav-link {
+        color: #212529;
+    }
+    body.light-mode .navbar .nav-link:hover {
+        color: #007bff;
+    }
+    body.light-mode .list-group-item {
+        background-color: #ffffff;
+        color: #212529; /* Ensure list item text is visible in light mode */
+    }
+    </style>
+</head>
+<body class="bg-dark text-white">
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/zoom">MassWala Music</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="devotionalDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">Devotional</a>
+                        <ul class="dropdown-menu" aria-labelledby="devotionalDropdown">
+                            <li><a class="dropdown-item" href="#">Ayyappan</a></li>
+                            <li><a class="dropdown-item" href="#">Amman</a></li>
+                            <li><a class="dropdown-item" href="#">Murugan</a></li>
+                            <li><a class="dropdown-item" href="#">Vinayagar</a></li>
+                            <li><a class="dropdown-item" href="#">Perumal</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="movieSongsDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">Movie Songs</a>
+                        <ul class="dropdown-menu" aria-labelledby="movieSongsDropdown">
+                            <li><a class="dropdown-item" href="/Illaiyaraja">Illaiyaraja</a></li>
+                            <li><a class="dropdown-item" href="/Vijay">Vijay</a></li>
+                            <li><a class="dropdown-item" href="/Sivakarthikayan">Sivakarthikayan</a></li>
+                            <li><a class="dropdown-item" href="/Rajinikanth">Rajinikanth</a></li>
+                            <li><a class="dropdown-item" href="/Prabu">Prabu</a></li>
+                            <li><a class="dropdown-item" href="/Ajith">Ajith</a></li>
+                            <li><a class="dropdown-item" href="/Mohan">Mohan</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                </ul>
+                <button id="toggleButton" class="btn btn-warning ms-3">Switch to Light Mode</button>
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4"   th:text="${Title}"></h1>
+        <ul id="songList" class="list-group"></ul>
+    </div>
+    
+    <audio id="audioPlayer" controls class="d-block mx-auto mt-4" style="width: 100%; max-width: 400px; display: none;"></audio>
+    
+    <script th:inline="javascript">
+        //const apiUrl = "http://localhost:8080/api/songs/nanban";
+		const apiUrl = [[${Url}]];
+		//let username = [[${Url}]];
+		//alert("Heyyyy " + username);
+        const songList = document.getElementById("songList");
+        const audioPlayer = document.getElementById("audioPlayer");
+        const toggleButton = document.getElementById("toggleButton");
+        const body = document.body;
+
+        // Function to toggle between light and dark mode
+        toggleButton.addEventListener("click", () => {
+            body.classList.toggle("light-mode");
+            body.classList.toggle("bg-dark");
+
+            if (body.classList.contains("light-mode")) {
+                toggleButton.textContent = "Switch to Dark Mode";
+            } else {
+                toggleButton.textContent = "Switch to Light Mode";
+            }
+        });
+
+        async function fetchSongs() {
+            try {
+                const response = await fetch(apiUrl);
+                const songs = await response.json();
+                
+                songs.forEach(song => {
+                    const listItem = document.createElement("li");
+                    listItem.classList.add("list-group-item", "list-group-item-action", "bg-secondary", "text-white");
+                    listItem.textContent = song;
+                    listItem.style.cursor = "pointer";
+                    
+                    listItem.addEventListener("click", () => playSong(song));
+                    
+                    songList.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error("Error fetching songs:", error);
+            }
+        }
+        
+        function playSong(song) {
+            audioPlayer.src = `${apiUrl}/${encodeURIComponent(song)}`;
+            audioPlayer.style.display = "block";
+            audioPlayer.play();
+        }
+        
+        fetchSongs();
+    </script>
+</body>
+</html>
